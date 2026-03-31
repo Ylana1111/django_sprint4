@@ -95,3 +95,5 @@ EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+LOGIN_URL = '/auth/login/'
+TEMPLATES_DIR = BASE_DIR / 'templates'

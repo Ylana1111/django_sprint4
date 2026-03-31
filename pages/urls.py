@@ -7,5 +7,5 @@ urlpatterns = [
     path('about/', views.AboutView.as_view(), name='about'),
     path('rules/', views.RulesView.as_view(), name='rules'),
     path('registration/', views.RegistrationView.as_view(), name='registration'),
-    path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('edit_profile/', views.EditProfileView.as_view(), name='edit_profile'),
 ]

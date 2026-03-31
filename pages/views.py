@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from django.views.generic import TemplateView, CreateView
+from django.views.generic import TemplateView, CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .forms import RegistrationForm, EditProfileForm
 
 User = get_user_model()
-
 
 
 class AboutView(TemplateView):
@@ -42,14 +42,15 @@ class RegistrationView(CreateView):
         return response
 
 
+# Редактирование профиля (CBV)
+class EditProfileView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = EditProfileForm
+    template_name = 'pages/edit_profile.html'
+    success_url = reverse_lazy('blog:index')
 
-@login_required
-def edit_profile(request):
-    if request.method == 'POST':
-        form = EditProfileForm(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('blog:profile', username=request.user.username)
-    else:
-        form = EditProfileForm(instance=request.user)
-    return render(request, 'pages/edit_profile.html', {'form': form})
+    def get_object(self):
+        return self.request.user
+
+    def get_success_url(self):
+        return reverse_lazy('blog:profile', kwargs={'username': self.request.user.username})
