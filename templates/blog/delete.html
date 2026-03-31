@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Удаление публикации
+{% endblock %}
+
+{% block content %}
+  <div class="col d-flex justify-content-center">
+    <div class="card" style="width: 40rem;">
+      <div class="card-header">
+        Удаление публикации
+      </div>
+      <div class="card-body">
+        <p class="text-danger">Вы уверены, что хотите удалить эту публикацию?</p>
+        
+        {% if post.image %}
+          <img src="{{ post.image.url }}" class="img-fluid mb-3" style="max-height: 200px;">
+        {% endif %}
+        
+        <h3>{{ post.title }}</h3>
+        <p class="text-muted">
+          {{ post.pub_date|date:"d E Y" }} | 
+          {% if post.location and post.location.is_published %}
+            {{ post.location.name }}
+          {% else %}
+            Планета Земля
+          {% endif %}
+        </p>
+        <p>{{ post.text|linebreaksbr|truncatewords:50 }}</p>
+        
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Да, удалить</button>
+          <a href="{% url 'blog:post_detail' post.id %}" class="btn btn-secondary">Отмена</a>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

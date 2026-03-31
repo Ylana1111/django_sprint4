@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load django_bootstrap5 %}
+
 {% block title %}
   {% if '/edit_comment/' in request.path %}
     Редактирование комментария
@@ -7,6 +8,7 @@
     Удаление комментария
   {% endif %}
 {% endblock %}
+
 {% block content %}
   {% if user.is_authenticated %}
     <div class="col d-flex justify-content-center">
@@ -21,15 +23,33 @@
         <div class="card-body">
           <form method="post"
             {% if '/edit_comment/' in request.path %}
-              action="{% url 'blog:edit_comment' comment.post_id comment.id %}"
+              action="{% url 'blog:edit_comment' comment.post.id comment.id %}"
+            {% elif '/delete_comment/' in request.path %}
+              action="{% url 'blog:delete_comment' comment.post.id comment.id %}"
             {% endif %}>
             {% csrf_token %}
-            {% if not '/delete_comment/' in request.path %}
+            
+            {% if '/edit_comment/' in request.path %}
               {% bootstrap_form form %}
-            {% else %}
-              <p>{{ comment.text }}</p>
+              <button type="submit" class="btn btn-primary">Сохранить</button>
+            {% elif '/delete_comment/' in request.path %}
+              <p class="mb-3">Вы уверены, что хотите удалить этот комментарий?</p>
+              <div class="card bg-light mb-3">
+                <div class="card-body">
+                  <p class="card-text">{{ comment.text }}</p>
+                  <p class="card-subtitle text-muted">
+                    Автор: {{ comment.author.username }} |
+                    {{ comment.created_at|date:"d E Y H:i" }}
+                  </p>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-danger">Удалить</button>
+              <a href="{% url 'blog:post_detail' comment.post.id %}" class="btn btn-secondary">Отмена</a>
             {% endif %}
-            {% bootstrap_button button_type="submit" content="Отправить" %}
+            
+            {% if '/edit_comment/' in request.path %}
+              <a href="{% url 'blog:post_detail' comment.post.id %}" class="btn btn-secondary">Отмена</a>
+            {% endif %}
           </form>
         </div>
       </div>
